@@ -1,0 +1,14 @@
+{
+  "name": "wms-witmock",
+  "version": "0.1.0",
+  "description": "Standalone generic mock warehouse management system with a REST/JSON integration API.",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js",
+    "seed:export": "node scripts/export-seed.js",
+    "seed:check": "node scripts/export-seed.js --check"
+  }
+}

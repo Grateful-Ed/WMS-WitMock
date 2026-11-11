@@ -1,0 +1,2164 @@
+{
+  "schema_version": 1,
+  "warehouse": {
+    "id": "WH-01",
+    "name": "Mock Distribution Center",
+    "timezone": "UTC",
+    "seeded_at": "2026-01-12T07:00:00Z"
+  },
+  "labor_overload": {
+    "zone_id": "ZB",
+    "note": "Zone ZB has 14 open pick tasks and only 2 active workers. Other zones have 1 task or fewer per worker."
+  },
+  "items": [
+    {
+      "id": "SKU-1001",
+      "description": "Cotton T-Shirt, Medium",
+      "uom": "EA",
+      "case_qty": 24,
+      "weight_kg": 0.2,
+      "putaway_bin": "ZA-01-01"
+    },
+    {
+      "id": "SKU-1002",
+      "description": "Cotton T-Shirt, Large",
+      "uom": "EA",
+      "case_qty": 24,
+      "weight_kg": 0.22,
+      "putaway_bin": "ZA-01-02"
+    },
+    {
+      "id": "SKU-1003",
+      "description": "Canvas Tote Bag",
+      "uom": "EA",
+      "case_qty": 20,
+      "weight_kg": 0.35,
+      "putaway_bin": "ZA-01-03"
+    },
+    {
+      "id": "SKU-1004",
+      "description": "Stainless Water Bottle 500ml",
+      "uom": "EA",
+      "case_qty": 12,
+      "weight_kg": 0.4,
+      "putaway_bin": "ZA-01-04"
+    },
+    {
+      "id": "SKU-1005",
+      "description": "Ceramic Mug 12oz",
+      "uom": "EA",
+      "case_qty": 24,
+      "weight_kg": 0.45,
+      "putaway_bin": "ZA-01-05"
+    },
+    {
+      "id": "SKU-1006",
+      "description": "Notebook A5 Ruled",
+      "uom": "EA",
+      "case_qty": 50,
+      "weight_kg": 0.25,
+      "putaway_bin": "ZA-02-01"
+    },
+    {
+      "id": "SKU-1007",
+      "description": "Ballpoint Pen Blue (box of 10)",
+      "uom": "EA",
+      "case_qty": 40,
+      "weight_kg": 0.1,
+      "putaway_bin": "ZA-02-02"
+    },
+    {
+      "id": "SKU-1008",
+      "description": "LED Desk Lamp",
+      "uom": "EA",
+      "case_qty": 6,
+      "weight_kg": 1.2,
+      "putaway_bin": "ZA-02-03"
+    },
+    {
+      "id": "SKU-1009",
+      "description": "Office Chair Mat",
+      "uom": "EA",
+      "case_qty": 4,
+      "weight_kg": 4.5,
+      "putaway_bin": "ZA-02-04"
+    },
+    {
+      "id": "SKU-1010",
+      "description": "Monitor Stand",
+      "uom": "EA",
+      "case_qty": 4,
+      "weight_kg": 3.1,
+      "putaway_bin": "ZA-02-05"
+    },
+    {
+      "id": "SKU-1011",
+      "description": "Bamboo Cutting Board",
+      "uom": "EA",
+      "case_qty": 10,
+      "weight_kg": 1,
+      "putaway_bin": "ZC-01-01"
+    },
+    {
+      "id": "SKU-1012",
+      "description": "Silicone Spatula Set",
+      "uom": "EA",
+      "case_qty": 20,
+      "weight_kg": 0.3,
+      "putaway_bin": "ZC-01-02"
+    }
+  ],
+  "zones": [
+    {
+      "id": "ZA",
+      "name": "Reserve",
+      "type": "reserve"
+    },
+    {
+      "id": "ZB",
+      "name": "Forward Pick",
+      "type": "pick"
+    },
+    {
+      "id": "ZC",
+      "name": "Overflow and Returns",
+      "type": "overflow"
+    }
+  ],
+  "bins": [
+    {
+      "id": "ZA-01-01",
+      "zone_id": "ZA",
+      "aisle": "01",
+      "position": "01",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-01-02",
+      "zone_id": "ZA",
+      "aisle": "01",
+      "position": "02",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-01-03",
+      "zone_id": "ZA",
+      "aisle": "01",
+      "position": "03",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-01-04",
+      "zone_id": "ZA",
+      "aisle": "01",
+      "position": "04",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-01-05",
+      "zone_id": "ZA",
+      "aisle": "01",
+      "position": "05",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-02-01",
+      "zone_id": "ZA",
+      "aisle": "02",
+      "position": "01",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-02-02",
+      "zone_id": "ZA",
+      "aisle": "02",
+      "position": "02",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-02-03",
+      "zone_id": "ZA",
+      "aisle": "02",
+      "position": "03",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-02-04",
+      "zone_id": "ZA",
+      "aisle": "02",
+      "position": "04",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZA-02-05",
+      "zone_id": "ZA",
+      "aisle": "02",
+      "position": "05",
+      "capacity": 600,
+      "status": "active"
+    },
+    {
+      "id": "ZB-01-01",
+      "zone_id": "ZB",
+      "aisle": "01",
+      "position": "01",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-01-02",
+      "zone_id": "ZB",
+      "aisle": "01",
+      "position": "02",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-01-03",
+      "zone_id": "ZB",
+      "aisle": "01",
+      "position": "03",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-01-04",
+      "zone_id": "ZB",
+      "aisle": "01",
+      "position": "04",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-01-05",
+      "zone_id": "ZB",
+      "aisle": "01",
+      "position": "05",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-02-01",
+      "zone_id": "ZB",
+      "aisle": "02",
+      "position": "01",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-02-02",
+      "zone_id": "ZB",
+      "aisle": "02",
+      "position": "02",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-02-03",
+      "zone_id": "ZB",
+      "aisle": "02",
+      "position": "03",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-02-04",
+      "zone_id": "ZB",
+      "aisle": "02",
+      "position": "04",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZB-02-05",
+      "zone_id": "ZB",
+      "aisle": "02",
+      "position": "05",
+      "capacity": 150,
+      "status": "active"
+    },
+    {
+      "id": "ZC-01-01",
+      "zone_id": "ZC",
+      "aisle": "01",
+      "position": "01",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-01-02",
+      "zone_id": "ZC",
+      "aisle": "01",
+      "position": "02",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-01-03",
+      "zone_id": "ZC",
+      "aisle": "01",
+      "position": "03",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-01-04",
+      "zone_id": "ZC",
+      "aisle": "01",
+      "position": "04",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-01-05",
+      "zone_id": "ZC",
+      "aisle": "01",
+      "position": "05",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-02-01",
+      "zone_id": "ZC",
+      "aisle": "02",
+      "position": "01",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-02-02",
+      "zone_id": "ZC",
+      "aisle": "02",
+      "position": "02",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-02-03",
+      "zone_id": "ZC",
+      "aisle": "02",
+      "position": "03",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-02-04",
+      "zone_id": "ZC",
+      "aisle": "02",
+      "position": "04",
+      "capacity": 300,
+      "status": "active"
+    },
+    {
+      "id": "ZC-02-05",
+      "zone_id": "ZC",
+      "aisle": "02",
+      "position": "05",
+      "capacity": 300,
+      "status": "active"
+    }
+  ],
+  "doors": [
+    {
+      "id": "D01",
+      "name": "Dock Door 01",
+      "direction": "inbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D02",
+      "name": "Dock Door 02",
+      "direction": "inbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D03",
+      "name": "Dock Door 03",
+      "direction": "inbound",
+      "status": "occupied",
+      "current_ref": {
+        "type": "asn",
+        "id": "ASN-1003"
+      }
+    },
+    {
+      "id": "D04",
+      "name": "Dock Door 04",
+      "direction": "inbound",
+      "status": "occupied",
+      "current_ref": {
+        "type": "asn",
+        "id": "ASN-1004"
+      }
+    },
+    {
+      "id": "D05",
+      "name": "Dock Door 05",
+      "direction": "inbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D06",
+      "name": "Dock Door 06",
+      "direction": "inbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D07",
+      "name": "Dock Door 07",
+      "direction": "outbound",
+      "status": "occupied",
+      "current_ref": {
+        "type": "load",
+        "id": "LD-9001"
+      }
+    },
+    {
+      "id": "D08",
+      "name": "Dock Door 08",
+      "direction": "outbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D09",
+      "name": "Dock Door 09",
+      "direction": "outbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D10",
+      "name": "Dock Door 10",
+      "direction": "outbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D11",
+      "name": "Dock Door 11",
+      "direction": "outbound",
+      "status": "free",
+      "current_ref": null
+    },
+    {
+      "id": "D12",
+      "name": "Dock Door 12",
+      "direction": "outbound",
+      "status": "free",
+      "current_ref": null
+    }
+  ],
+  "dock_appointments": [
+    {
+      "id": "APT-101",
+      "door_id": "D01",
+      "direction": "inbound",
+      "ref_type": "asn",
+      "ref_id": "ASN-1001",
+      "start": "2026-01-12T14:00:00Z",
+      "end": "2026-01-12T15:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "APT-102",
+      "door_id": "D02",
+      "direction": "inbound",
+      "ref_type": "asn",
+      "ref_id": "ASN-1002",
+      "start": "2026-01-12T15:00:00Z",
+      "end": "2026-01-12T16:00:00Z",
+      "status": "scheduled"
+    },
+    {
+      "id": "APT-103",
+      "door_id": "D03",
+      "direction": "inbound",
+      "ref_type": "asn",
+      "ref_id": "ASN-1003",
+      "start": "2026-01-12T06:30:00Z",
+      "end": "2026-01-12T07:30:00Z",
+      "status": "arrived"
+    },
+    {
+      "id": "APT-104",
+      "door_id": "D04",
+      "direction": "inbound",
+      "ref_type": "asn",
+      "ref_id": "ASN-1004",
+      "start": "2026-01-12T05:30:00Z",
+      "end": "2026-01-12T07:00:00Z",
+      "status": "arrived"
+    },
+    {
+      "id": "APT-105",
+      "door_id": "D05",
+      "direction": "inbound",
+      "ref_type": "asn",
+      "ref_id": "ASN-1005",
+      "start": "2026-01-12T04:30:00Z",
+      "end": "2026-01-12T05:30:00Z",
+      "status": "completed"
+    },
+    {
+      "id": "APT-201",
+      "door_id": "D07",
+      "direction": "outbound",
+      "ref_type": "load",
+      "ref_id": "LD-9001",
+      "start": "2026-01-12T06:00:00Z",
+      "end": "2026-01-12T08:00:00Z",
+      "status": "arrived"
+    },
+    {
+      "id": "APT-202",
+      "door_id": "D08",
+      "direction": "outbound",
+      "ref_type": "load",
+      "ref_id": "LD-9002",
+      "start": "2026-01-12T13:00:00Z",
+      "end": "2026-01-12T14:00:00Z",
+      "status": "scheduled"
+    }
+  ],
+  "inventory": [
+    {
+      "location_id": "ZB-01-01",
+      "item_id": "SKU-1001",
+      "qty": 70
+    },
+    {
+      "location_id": "ZA-01-01",
+      "item_id": "SKU-1001",
+      "qty": 200
+    },
+    {
+      "location_id": "ZB-01-02",
+      "item_id": "SKU-1002",
+      "qty": 83
+    },
+    {
+      "location_id": "ZA-01-02",
+      "item_id": "SKU-1002",
+      "qty": 237
+    },
+    {
+      "location_id": "ZB-01-03",
+      "item_id": "SKU-1003",
+      "qty": 96
+    },
+    {
+      "location_id": "ZA-01-03",
+      "item_id": "SKU-1003",
+      "qty": 274
+    },
+    {
+      "location_id": "ZB-01-04",
+      "item_id": "SKU-1004",
+      "qty": 109
+    },
+    {
+      "location_id": "ZA-01-04",
+      "item_id": "SKU-1004",
+      "qty": 311
+    },
+    {
+      "location_id": "ZB-01-05",
+      "item_id": "SKU-1005",
+      "qty": 82
+    },
+    {
+      "location_id": "ZA-01-05",
+      "item_id": "SKU-1005",
+      "qty": 348
+    },
+    {
+      "location_id": "ZB-02-01",
+      "item_id": "SKU-1006",
+      "qty": 95
+    },
+    {
+      "location_id": "ZA-02-01",
+      "item_id": "SKU-1006",
+      "qty": 235
+    },
+    {
+      "location_id": "ZB-02-02",
+      "item_id": "SKU-1007",
+      "qty": 108
+    },
+    {
+      "location_id": "ZA-02-02",
+      "item_id": "SKU-1007",
+      "qty": 272
+    },
+    {
+      "location_id": "ZB-02-03",
+      "item_id": "SKU-1008",
+      "qty": 81
+    },
+    {
+      "location_id": "ZA-02-03",
+      "item_id": "SKU-1008",
+      "qty": 309
+    },
+    {
+      "location_id": "ZA-02-04",
+      "item_id": "SKU-1009",
+      "qty": 120
+    },
+    {
+      "location_id": "ZA-02-05",
+      "item_id": "SKU-1010",
+      "qty": 90
+    },
+    {
+      "location_id": "ZC-01-01",
+      "item_id": "SKU-1011",
+      "qty": 80
+    },
+    {
+      "location_id": "ZC-01-02",
+      "item_id": "SKU-1012",
+      "qty": 100
+    },
+    {
+      "location_id": "ZC-01-03",
+      "item_id": "SKU-1001",
+      "qty": 30
+    },
+    {
+      "location_id": "ZC-01-04",
+      "item_id": "SKU-1002",
+      "qty": 35
+    },
+    {
+      "location_id": "ZC-01-05",
+      "item_id": "SKU-1003",
+      "qty": 40
+    },
+    {
+      "location_id": "ZC-02-01",
+      "item_id": "SKU-1004",
+      "qty": 45
+    },
+    {
+      "location_id": "ZC-02-02",
+      "item_id": "SKU-1005",
+      "qty": 50
+    },
+    {
+      "location_id": "ZC-02-03",
+      "item_id": "SKU-1006",
+      "qty": 55
+    },
+    {
+      "location_id": "ZB-02-04",
+      "item_id": "SKU-1001",
+      "qty": 30
+    },
+    {
+      "location_id": "ZB-02-05",
+      "item_id": "SKU-1002",
+      "qty": 30
+    },
+    {
+      "location_id": "PAL-001",
+      "item_id": "SKU-1003",
+      "qty": 60
+    },
+    {
+      "location_id": "PAL-002",
+      "item_id": "SKU-1009",
+      "qty": 40
+    },
+    {
+      "location_id": "PAL-003",
+      "item_id": "SKU-1011",
+      "qty": 24
+    },
+    {
+      "location_id": "PAL-004",
+      "item_id": "SKU-1001",
+      "qty": 8
+    },
+    {
+      "location_id": "PAL-005",
+      "item_id": "SKU-1002",
+      "qty": 6
+    },
+    {
+      "location_id": "PAL-006",
+      "item_id": "SKU-1005",
+      "qty": 12
+    },
+    {
+      "location_id": "PAL-007",
+      "item_id": "SKU-1006",
+      "qty": 10
+    },
+    {
+      "location_id": "PAL-008",
+      "item_id": "SKU-1007",
+      "qty": 4
+    }
+  ],
+  "pallets": [
+    {
+      "id": "PAL-001",
+      "direction": "inbound",
+      "lane": "STG-D04",
+      "status": "putaway_pending",
+      "asn_id": "ASN-1004",
+      "asn_line": 1,
+      "delivery_id": null
+    },
+    {
+      "id": "PAL-002",
+      "direction": "inbound",
+      "lane": "STG-D05",
+      "status": "putaway_pending",
+      "asn_id": "ASN-1005",
+      "asn_line": 1,
+      "delivery_id": null
+    },
+    {
+      "id": "PAL-003",
+      "direction": "inbound",
+      "lane": "STG-D05",
+      "status": "putaway_pending",
+      "asn_id": "ASN-1005",
+      "asn_line": 2,
+      "delivery_id": null
+    },
+    {
+      "id": "PAL-004",
+      "direction": "outbound",
+      "lane": "STG-D07",
+      "status": "staged_for_load",
+      "asn_id": null,
+      "asn_line": null,
+      "delivery_id": "OD-7001"
+    },
+    {
+      "id": "PAL-005",
+      "direction": "outbound",
+      "lane": "STG-D07",
+      "status": "staged_for_load",
+      "asn_id": null,
+      "asn_line": null,
+      "delivery_id": "OD-7001"
+    },
+    {
+      "id": "PAL-006",
+      "direction": "outbound",
+      "lane": "STG-D07",
+      "status": "staged_for_load",
+      "asn_id": null,
+      "asn_line": null,
+      "delivery_id": "OD-7002"
+    },
+    {
+      "id": "PAL-007",
+      "direction": "outbound",
+      "lane": "STG-D08",
+      "status": "staged_for_load",
+      "asn_id": null,
+      "asn_line": null,
+      "delivery_id": "OD-7003"
+    },
+    {
+      "id": "PAL-008",
+      "direction": "outbound",
+      "lane": "STG-D08",
+      "status": "staged_for_load",
+      "asn_id": null,
+      "asn_line": null,
+      "delivery_id": "OD-7003"
+    }
+  ],
+  "ledger": [
+    {
+      "id": "LG-000001",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1001",
+      "from_location": null,
+      "to_location": "ZB-01-01",
+      "qty": 70,
+      "ref": null
+    },
+    {
+      "id": "LG-000002",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1001",
+      "from_location": null,
+      "to_location": "ZA-01-01",
+      "qty": 200,
+      "ref": null
+    },
+    {
+      "id": "LG-000003",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1002",
+      "from_location": null,
+      "to_location": "ZB-01-02",
+      "qty": 83,
+      "ref": null
+    },
+    {
+      "id": "LG-000004",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1002",
+      "from_location": null,
+      "to_location": "ZA-01-02",
+      "qty": 237,
+      "ref": null
+    },
+    {
+      "id": "LG-000005",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1003",
+      "from_location": null,
+      "to_location": "ZB-01-03",
+      "qty": 96,
+      "ref": null
+    },
+    {
+      "id": "LG-000006",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1003",
+      "from_location": null,
+      "to_location": "ZA-01-03",
+      "qty": 274,
+      "ref": null
+    },
+    {
+      "id": "LG-000007",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1004",
+      "from_location": null,
+      "to_location": "ZB-01-04",
+      "qty": 109,
+      "ref": null
+    },
+    {
+      "id": "LG-000008",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1004",
+      "from_location": null,
+      "to_location": "ZA-01-04",
+      "qty": 311,
+      "ref": null
+    },
+    {
+      "id": "LG-000009",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1005",
+      "from_location": null,
+      "to_location": "ZB-01-05",
+      "qty": 82,
+      "ref": null
+    },
+    {
+      "id": "LG-000010",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1005",
+      "from_location": null,
+      "to_location": "ZA-01-05",
+      "qty": 348,
+      "ref": null
+    },
+    {
+      "id": "LG-000011",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1006",
+      "from_location": null,
+      "to_location": "ZB-02-01",
+      "qty": 95,
+      "ref": null
+    },
+    {
+      "id": "LG-000012",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1006",
+      "from_location": null,
+      "to_location": "ZA-02-01",
+      "qty": 235,
+      "ref": null
+    },
+    {
+      "id": "LG-000013",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1007",
+      "from_location": null,
+      "to_location": "ZB-02-02",
+      "qty": 108,
+      "ref": null
+    },
+    {
+      "id": "LG-000014",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1007",
+      "from_location": null,
+      "to_location": "ZA-02-02",
+      "qty": 272,
+      "ref": null
+    },
+    {
+      "id": "LG-000015",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1008",
+      "from_location": null,
+      "to_location": "ZB-02-03",
+      "qty": 81,
+      "ref": null
+    },
+    {
+      "id": "LG-000016",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1008",
+      "from_location": null,
+      "to_location": "ZA-02-03",
+      "qty": 309,
+      "ref": null
+    },
+    {
+      "id": "LG-000017",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1009",
+      "from_location": null,
+      "to_location": "ZA-02-04",
+      "qty": 120,
+      "ref": null
+    },
+    {
+      "id": "LG-000018",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1010",
+      "from_location": null,
+      "to_location": "ZA-02-05",
+      "qty": 90,
+      "ref": null
+    },
+    {
+      "id": "LG-000019",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1011",
+      "from_location": null,
+      "to_location": "ZC-01-01",
+      "qty": 80,
+      "ref": null
+    },
+    {
+      "id": "LG-000020",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1012",
+      "from_location": null,
+      "to_location": "ZC-01-02",
+      "qty": 100,
+      "ref": null
+    },
+    {
+      "id": "LG-000021",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1001",
+      "from_location": null,
+      "to_location": "ZC-01-03",
+      "qty": 30,
+      "ref": null
+    },
+    {
+      "id": "LG-000022",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1002",
+      "from_location": null,
+      "to_location": "ZC-01-04",
+      "qty": 35,
+      "ref": null
+    },
+    {
+      "id": "LG-000023",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1003",
+      "from_location": null,
+      "to_location": "ZC-01-05",
+      "qty": 40,
+      "ref": null
+    },
+    {
+      "id": "LG-000024",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1004",
+      "from_location": null,
+      "to_location": "ZC-02-01",
+      "qty": 45,
+      "ref": null
+    },
+    {
+      "id": "LG-000025",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1005",
+      "from_location": null,
+      "to_location": "ZC-02-02",
+      "qty": 50,
+      "ref": null
+    },
+    {
+      "id": "LG-000026",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1006",
+      "from_location": null,
+      "to_location": "ZC-02-03",
+      "qty": 55,
+      "ref": null
+    },
+    {
+      "id": "LG-000027",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1001",
+      "from_location": null,
+      "to_location": "ZB-02-04",
+      "qty": 30,
+      "ref": null
+    },
+    {
+      "id": "LG-000028",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1002",
+      "from_location": null,
+      "to_location": "ZB-02-05",
+      "qty": 30,
+      "ref": null
+    },
+    {
+      "id": "LG-000029",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1003",
+      "from_location": null,
+      "to_location": "PAL-001",
+      "qty": 60,
+      "ref": null
+    },
+    {
+      "id": "LG-000030",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1009",
+      "from_location": null,
+      "to_location": "PAL-002",
+      "qty": 40,
+      "ref": null
+    },
+    {
+      "id": "LG-000031",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1011",
+      "from_location": null,
+      "to_location": "PAL-003",
+      "qty": 24,
+      "ref": null
+    },
+    {
+      "id": "LG-000032",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1001",
+      "from_location": null,
+      "to_location": "PAL-004",
+      "qty": 8,
+      "ref": null
+    },
+    {
+      "id": "LG-000033",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1002",
+      "from_location": null,
+      "to_location": "PAL-005",
+      "qty": 6,
+      "ref": null
+    },
+    {
+      "id": "LG-000034",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1005",
+      "from_location": null,
+      "to_location": "PAL-006",
+      "qty": 12,
+      "ref": null
+    },
+    {
+      "id": "LG-000035",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1006",
+      "from_location": null,
+      "to_location": "PAL-007",
+      "qty": 10,
+      "ref": null
+    },
+    {
+      "id": "LG-000036",
+      "at": "2026-01-12T07:00:00Z",
+      "type": "opening",
+      "item_id": "SKU-1007",
+      "from_location": null,
+      "to_location": "PAL-008",
+      "qty": 4,
+      "ref": null
+    }
+  ],
+  "asns": [
+    {
+      "id": "ASN-1001",
+      "supplier": "Northwind Supply",
+      "status": "scheduled",
+      "door_id": "D01",
+      "appointment_id": "APT-101",
+      "arrived_at": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1004",
+          "expected_qty": 200,
+          "received_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "ASN-1002",
+      "supplier": "Pacific Goods",
+      "status": "scheduled",
+      "door_id": "D02",
+      "appointment_id": "APT-102",
+      "arrived_at": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1010",
+          "expected_qty": 30,
+          "received_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1012",
+          "expected_qty": 50,
+          "received_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "ASN-1003",
+      "supplier": "Lakeside Imports",
+      "status": "arrived",
+      "door_id": "D03",
+      "appointment_id": "APT-103",
+      "arrived_at": "2026-01-12T06:30:00Z",
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1002",
+          "expected_qty": 100,
+          "received_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1005",
+          "expected_qty": 60,
+          "received_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "ASN-1004",
+      "supplier": "Harbor Goods Ltd",
+      "status": "receiving",
+      "door_id": "D04",
+      "appointment_id": "APT-104",
+      "arrived_at": "2026-01-12T05:45:00Z",
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1003",
+          "expected_qty": 120,
+          "received_qty": 60
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1008",
+          "expected_qty": 48,
+          "received_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "ASN-1005",
+      "supplier": "Summit Wholesale",
+      "status": "received",
+      "door_id": "D05",
+      "appointment_id": "APT-105",
+      "arrived_at": "2026-01-12T05:00:00Z",
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1009",
+          "expected_qty": 40,
+          "received_qty": 40
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1011",
+          "expected_qty": 24,
+          "received_qty": 24
+        }
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": "SO-5001",
+      "customer": "Acme Retail",
+      "status": "released",
+      "wave_id": "WV-301",
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1001",
+          "qty": 12,
+          "picked_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1003",
+          "qty": 6,
+          "picked_qty": 0
+        },
+        {
+          "line": 3,
+          "item_id": "SKU-1009",
+          "qty": 4,
+          "picked_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "SO-5002",
+      "customer": "Bluebird Stores",
+      "status": "released",
+      "wave_id": "WV-301",
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1002",
+          "qty": 8,
+          "picked_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1004",
+          "qty": 10,
+          "picked_qty": 0
+        },
+        {
+          "line": 3,
+          "item_id": "SKU-1005",
+          "qty": 5,
+          "picked_qty": 0
+        },
+        {
+          "line": 4,
+          "item_id": "SKU-1011",
+          "qty": 3,
+          "picked_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "SO-5003",
+      "customer": "Cedar and Co",
+      "status": "released",
+      "wave_id": "WV-301",
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1006",
+          "qty": 20,
+          "picked_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1007",
+          "qty": 6,
+          "picked_qty": 0
+        },
+        {
+          "line": 3,
+          "item_id": "SKU-1008",
+          "qty": 9,
+          "picked_qty": 0
+        },
+        {
+          "line": 4,
+          "item_id": "SKU-1001",
+          "qty": 5,
+          "picked_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "SO-5004",
+      "customer": "Delta Outfitters",
+      "status": "released",
+      "wave_id": "WV-301",
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1002",
+          "qty": 4,
+          "picked_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1005",
+          "qty": 6,
+          "picked_qty": 0
+        },
+        {
+          "line": 3,
+          "item_id": "SKU-1007",
+          "qty": 3,
+          "picked_qty": 0
+        },
+        {
+          "line": 4,
+          "item_id": "SKU-1008",
+          "qty": 2,
+          "picked_qty": 0
+        },
+        {
+          "line": 5,
+          "item_id": "SKU-1004",
+          "qty": 5,
+          "picked_qty": 0
+        },
+        {
+          "line": 6,
+          "item_id": "SKU-1010",
+          "qty": 2,
+          "picked_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "SO-5005",
+      "customer": "Evergreen Market",
+      "status": "open",
+      "wave_id": "WV-302",
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1001",
+          "qty": 10,
+          "picked_qty": 0
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1006",
+          "qty": 4,
+          "picked_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "SO-5006",
+      "customer": "Foxglove Boutique",
+      "status": "open",
+      "wave_id": "WV-302",
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1004",
+          "qty": 6,
+          "picked_qty": 0
+        }
+      ]
+    },
+    {
+      "id": "SO-5007",
+      "customer": "Granite Supply",
+      "status": "packed",
+      "wave_id": null,
+      "delivery_id": "OD-7001",
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1001",
+          "qty": 8,
+          "picked_qty": 8
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1002",
+          "qty": 6,
+          "picked_qty": 6
+        }
+      ]
+    },
+    {
+      "id": "SO-5008",
+      "customer": "Harbor Retail",
+      "status": "packed",
+      "wave_id": null,
+      "delivery_id": "OD-7002",
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1005",
+          "qty": 12,
+          "picked_qty": 12
+        }
+      ]
+    },
+    {
+      "id": "SO-5009",
+      "customer": "Iris Home Goods",
+      "status": "packed",
+      "wave_id": null,
+      "delivery_id": "OD-7003",
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1006",
+          "qty": 10,
+          "picked_qty": 10
+        },
+        {
+          "line": 2,
+          "item_id": "SKU-1007",
+          "qty": 4,
+          "picked_qty": 4
+        }
+      ]
+    },
+    {
+      "id": "SO-5010",
+      "customer": "Juniper Gifts",
+      "status": "open",
+      "wave_id": null,
+      "delivery_id": null,
+      "lines": [
+        {
+          "line": 1,
+          "item_id": "SKU-1012",
+          "qty": 10,
+          "picked_qty": 0
+        }
+      ]
+    }
+  ],
+  "waves": [
+    {
+      "id": "WV-301",
+      "status": "released",
+      "order_ids": [
+        "SO-5001",
+        "SO-5002",
+        "SO-5003",
+        "SO-5004"
+      ],
+      "released_at": "2026-01-12T06:45:00Z"
+    },
+    {
+      "id": "WV-302",
+      "status": "planned",
+      "order_ids": [
+        "SO-5005",
+        "SO-5006"
+      ],
+      "released_at": null
+    }
+  ],
+  "deliveries": [
+    {
+      "id": "OD-7001",
+      "order_id": "SO-5007",
+      "status": "packed",
+      "load_id": "LD-9001",
+      "pallet_ids": [
+        "PAL-004",
+        "PAL-005"
+      ],
+      "shipped_at": null
+    },
+    {
+      "id": "OD-7002",
+      "order_id": "SO-5008",
+      "status": "packed",
+      "load_id": "LD-9001",
+      "pallet_ids": [
+        "PAL-006"
+      ],
+      "shipped_at": null
+    },
+    {
+      "id": "OD-7003",
+      "order_id": "SO-5009",
+      "status": "packed",
+      "load_id": "LD-9002",
+      "pallet_ids": [
+        "PAL-007",
+        "PAL-008"
+      ],
+      "shipped_at": null
+    }
+  ],
+  "loads": [
+    {
+      "id": "LD-9001",
+      "door_id": "D07",
+      "carrier": "Redline Freight",
+      "status": "loading",
+      "appointment_id": "APT-201",
+      "delivery_ids": [
+        "OD-7001",
+        "OD-7002"
+      ],
+      "seal_no": null,
+      "shipped_at": null
+    },
+    {
+      "id": "LD-9002",
+      "door_id": "D08",
+      "carrier": "Blue Ridge Carriers",
+      "status": "planned",
+      "appointment_id": "APT-202",
+      "delivery_ids": [
+        "OD-7003"
+      ],
+      "seal_no": null,
+      "shipped_at": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TK-0001",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5001",
+      "line": 1,
+      "item_id": "SKU-1001",
+      "qty": 12,
+      "from_bin": "ZB-01-01",
+      "to_location": "PK-SO-5001",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0002",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5001",
+      "line": 2,
+      "item_id": "SKU-1003",
+      "qty": 6,
+      "from_bin": "ZB-01-03",
+      "to_location": "PK-SO-5001",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0003",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZA",
+      "assigned_to": "W-05",
+      "wave_id": "WV-301",
+      "order_id": "SO-5001",
+      "line": 3,
+      "item_id": "SKU-1009",
+      "qty": 4,
+      "from_bin": "ZA-02-04",
+      "to_location": "PK-SO-5001",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0004",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5002",
+      "line": 1,
+      "item_id": "SKU-1002",
+      "qty": 8,
+      "from_bin": "ZB-01-02",
+      "to_location": "PK-SO-5002",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0005",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5002",
+      "line": 2,
+      "item_id": "SKU-1004",
+      "qty": 10,
+      "from_bin": "ZB-01-04",
+      "to_location": "PK-SO-5002",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0006",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5002",
+      "line": 3,
+      "item_id": "SKU-1005",
+      "qty": 5,
+      "from_bin": "ZB-01-05",
+      "to_location": "PK-SO-5002",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0007",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZC",
+      "assigned_to": "W-11",
+      "wave_id": "WV-301",
+      "order_id": "SO-5002",
+      "line": 4,
+      "item_id": "SKU-1011",
+      "qty": 3,
+      "from_bin": "ZC-01-01",
+      "to_location": "PK-SO-5002",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0008",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5003",
+      "line": 1,
+      "item_id": "SKU-1006",
+      "qty": 20,
+      "from_bin": "ZB-02-01",
+      "to_location": "PK-SO-5003",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0009",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5003",
+      "line": 2,
+      "item_id": "SKU-1007",
+      "qty": 6,
+      "from_bin": "ZB-02-02",
+      "to_location": "PK-SO-5003",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0010",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5003",
+      "line": 3,
+      "item_id": "SKU-1008",
+      "qty": 9,
+      "from_bin": "ZB-02-03",
+      "to_location": "PK-SO-5003",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0011",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5003",
+      "line": 4,
+      "item_id": "SKU-1001",
+      "qty": 5,
+      "from_bin": "ZB-01-01",
+      "to_location": "PK-SO-5003",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0012",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5004",
+      "line": 1,
+      "item_id": "SKU-1002",
+      "qty": 4,
+      "from_bin": "ZB-01-02",
+      "to_location": "PK-SO-5004",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0013",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5004",
+      "line": 2,
+      "item_id": "SKU-1005",
+      "qty": 6,
+      "from_bin": "ZB-01-05",
+      "to_location": "PK-SO-5004",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0014",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5004",
+      "line": 3,
+      "item_id": "SKU-1007",
+      "qty": 3,
+      "from_bin": "ZB-02-02",
+      "to_location": "PK-SO-5004",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0015",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-09",
+      "wave_id": "WV-301",
+      "order_id": "SO-5004",
+      "line": 4,
+      "item_id": "SKU-1008",
+      "qty": 2,
+      "from_bin": "ZB-02-03",
+      "to_location": "PK-SO-5004",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0016",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZB",
+      "assigned_to": "W-10",
+      "wave_id": "WV-301",
+      "order_id": "SO-5004",
+      "line": 5,
+      "item_id": "SKU-1004",
+      "qty": 5,
+      "from_bin": "ZB-01-04",
+      "to_location": "PK-SO-5004",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0017",
+      "type": "pick",
+      "status": "open",
+      "zone_id": "ZA",
+      "assigned_to": "W-05",
+      "wave_id": "WV-301",
+      "order_id": "SO-5004",
+      "line": 6,
+      "item_id": "SKU-1010",
+      "qty": 2,
+      "from_bin": "ZA-02-05",
+      "to_location": "PK-SO-5004",
+      "created_at": "2026-01-12T06:45:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0018",
+      "type": "putaway",
+      "status": "open",
+      "zone_id": "ZA",
+      "assigned_to": "W-03",
+      "pallet_id": "PAL-001",
+      "item_id": "SKU-1003",
+      "qty": 60,
+      "from_location": "PAL-001",
+      "to_bin": "ZA-01-03",
+      "created_at": "2026-01-12T06:00:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0019",
+      "type": "putaway",
+      "status": "open",
+      "zone_id": "ZA",
+      "assigned_to": "W-04",
+      "pallet_id": "PAL-002",
+      "item_id": "SKU-1009",
+      "qty": 40,
+      "from_location": "PAL-002",
+      "to_bin": "ZA-02-04",
+      "created_at": "2026-01-12T06:00:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0020",
+      "type": "putaway",
+      "status": "open",
+      "zone_id": "ZC",
+      "assigned_to": null,
+      "pallet_id": "PAL-003",
+      "item_id": "SKU-1011",
+      "qty": 24,
+      "from_location": "PAL-003",
+      "to_bin": "ZC-01-01",
+      "created_at": "2026-01-12T06:00:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0021",
+      "type": "count",
+      "status": "open",
+      "zone_id": "ZA",
+      "assigned_to": "W-07",
+      "cycle_count_id": "CC-401",
+      "bin_id": "ZA-01-02",
+      "item_id": "SKU-1002",
+      "created_at": "2026-01-12T06:30:00Z",
+      "completed_at": null,
+      "completed_by": null
+    },
+    {
+      "id": "TK-0022",
+      "type": "count",
+      "status": "open",
+      "zone_id": "ZC",
+      "assigned_to": "W-13",
+      "cycle_count_id": "CC-402",
+      "bin_id": "ZC-01-01",
+      "item_id": "SKU-1011",
+      "created_at": "2026-01-12T06:30:00Z",
+      "completed_at": null,
+      "completed_by": null
+    }
+  ],
+  "cycle_counts": [
+    {
+      "id": "CC-401",
+      "bin_id": "ZA-01-02",
+      "item_id": "SKU-1002",
+      "status": "open",
+      "task_id": "TK-0021",
+      "system_qty": null,
+      "counted_qty": null,
+      "variance": null
+    },
+    {
+      "id": "CC-402",
+      "bin_id": "ZC-01-01",
+      "item_id": "SKU-1011",
+      "status": "open",
+      "task_id": "TK-0022",
+      "system_qty": null,
+      "counted_qty": null,
+      "variance": null
+    }
+  ],
+  "exceptions": [
+    {
+      "id": "EX-001",
+      "kind": "damage",
+      "entity": "asn",
+      "entity_id": "ASN-1005",
+      "severity": "medium",
+      "reason": "Two cartons crushed on arrival.",
+      "status": "open",
+      "raised_at": "2026-01-12T05:20:00Z",
+      "raised_by": "W-01"
+    },
+    {
+      "id": "EX-002",
+      "kind": "location_blocked",
+      "entity": "bin",
+      "entity_id": "ZC-02-05",
+      "severity": "low",
+      "reason": "Water leak near this bin. Do not put stock here.",
+      "status": "open",
+      "raised_at": "2026-01-12T06:10:00Z",
+      "raised_by": "W-13"
+    }
+  ],
+  "departments": [
+    {
+      "id": "RCV",
+      "name": "Receiving"
+    },
+    {
+      "id": "PUT",
+      "name": "Putaway"
+    },
+    {
+      "id": "PCK",
+      "name": "Picking"
+    },
+    {
+      "id": "PAK",
+      "name": "Packing"
+    },
+    {
+      "id": "SHP",
+      "name": "Shipping"
+    },
+    {
+      "id": "INV",
+      "name": "Inventory Control"
+    }
+  ],
+  "workers": [
+    {
+      "id": "W-01",
+      "name": "Maria Santos",
+      "department_id": "RCV",
+      "zone_id": null,
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-02",
+      "name": "Tom Becker",
+      "department_id": "RCV",
+      "zone_id": null,
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-03",
+      "name": "Priya Nair",
+      "department_id": "PUT",
+      "zone_id": "ZA",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-04",
+      "name": "Luis Ortega",
+      "department_id": "PUT",
+      "zone_id": "ZA",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-05",
+      "name": "Hannah Kim",
+      "department_id": "PCK",
+      "zone_id": "ZA",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-06",
+      "name": "Omar Haddad",
+      "department_id": "PCK",
+      "zone_id": "ZA",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-07",
+      "name": "Grace Liu",
+      "department_id": "INV",
+      "zone_id": "ZA",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-08",
+      "name": "Ben Carter",
+      "department_id": "PUT",
+      "zone_id": "ZA",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-09",
+      "name": "Sofia Rossi",
+      "department_id": "PCK",
+      "zone_id": "ZB",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-10",
+      "name": "Dev Patel",
+      "department_id": "PCK",
+      "zone_id": "ZB",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-11",
+      "name": "Anna Novak",
+      "department_id": "PCK",
+      "zone_id": "ZC",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-12",
+      "name": "Jack Moreau",
+      "department_id": "PCK",
+      "zone_id": "ZC",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-13",
+      "name": "Lena Fischer",
+      "department_id": "INV",
+      "zone_id": "ZC",
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-14",
+      "name": "Chris Obi",
+      "department_id": "PAK",
+      "zone_id": null,
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-15",
+      "name": "Mia Tanaka",
+      "department_id": "PAK",
+      "zone_id": null,
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-16",
+      "name": "Sam Walker",
+      "department_id": "SHP",
+      "zone_id": null,
+      "shift": "day",
+      "status": "active"
+    },
+    {
+      "id": "W-17",
+      "name": "Ivy Chen",
+      "department_id": "SHP",
+      "zone_id": null,
+      "shift": "day",
+      "status": "active"
+    }
+  ]
+}
