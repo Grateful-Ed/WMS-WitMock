@@ -52,24 +52,58 @@ const ASYNC_VERBS = new Set(['post-receiving', 'confirm-load']);
 const VERBS = ['complete', 'flag', 'post-receiving', 'confirm-load'];
 
 class Wms {
-  constructor({ file = null, clock = () => new Date().toISOString(), asyncDelayMs = null, seedFn = buildSeed } = {}) {
+  constructor({ file = null, clock = () => new Date().toISOString(), asyncDelayMs = null, seedFn = buildSeed, warn = console.warn } = {}) {
     this.file = file;
     this.clock = clock;
     this.asyncDelayMs = asyncDelayMs;
     this.seedFn = seedFn;
-    if (file && fs.existsSync(file)) {
-      this.s = JSON.parse(fs.readFileSync(file, 'utf8'));
+    this.warn = warn;
+    this.timers = new Map(); // act id -> timer handle
+    const loaded = file ? this._load(file) : null;
+    if (loaded) {
+      this.s = loaded;
+      if (!Number.isInteger(this.s.generation)) this.s.generation = 1;
       for (const a of this.s.acts) if (a.status === 'sent') this._schedule(a.id);
     } else {
-      this.reset();
+      this.s = null;
+      this.reset(this._lostGeneration || 0);
     }
   }
 
-  reset() {
+  // Read the store file. Returns the state, or null when there is no usable file.
+  // A bad file is moved aside (never deleted) so the server can boot from the seed.
+  _load(file) {
+    if (!fs.existsSync(file)) return null;
+    let text = '';
+    try {
+      text = fs.readFileSync(file, 'utf8');
+      const st = JSON.parse(text);
+      const ok = st && typeof st === 'object' && st.data && typeof st.data === 'object'
+        && Array.isArray(st.acts) && Array.isArray(st.events) && st.keys && st.counters
+        && Number.isInteger(st.seq);
+      if (!ok) throw new Error('state file does not have the expected shape');
+      return st;
+    } catch (e) {
+      const aside = `${file}.corrupt-${Date.now()}`;
+      let moved = `moved to ${aside}`;
+      try { fs.renameSync(file, aside); } catch (err) { moved = `COULD NOT BE MOVED ASIDE (${err.message}); it will be overwritten`; }
+      // Best effort: keep the generation counter moving forward so consumers still notice the replacement.
+      const g = /"generation"\s*:\s*(\d+)/.exec(text.slice(0, 200));
+      this._lostGeneration = g ? Number(g[1]) : 0;
+      this.warn(`WMS-WitMock WARNING: state file ${file} is corrupt (${e.message}). The bad file was ${moved}. Booting from the seed. All earlier state, acts, and idempotency keys are gone.`);
+      return null;
+    }
+  }
+
+  // Replace the whole world with the seed. Bumps the generation. Cancels pending verdict timers.
+  reset(previousGeneration) {
+    for (const t of this.timers.values()) clearTimeout(t);
+    this.timers.clear();
+    const generation = (previousGeneration !== undefined ? previousGeneration : (this.s ? this.s.generation : 0)) + 1;
     const seed = this.seedFn();
     const data = {};
     for (const k of Object.keys(seed)) data[k] = seed[k];
-    this.s = { seq: 0, events: [], acts: [], keys: {}, counters: {}, data };
+    this.s = { generation, seq: 0, events: [], acts: [], keys: {}, counters: {}, data };
     this._save();
   }
 
@@ -166,13 +200,14 @@ class Wms {
     return { zones, most_loaded_zone_id: max.zone_id };
   }
   snapshot() {
-    return { as_of_seq: this.s.seq, at: this.clock(), ...clone(this.d), labor_load: this.laborLoad() };
+    return { generation: this.s.generation, as_of_seq: this.s.seq, at: this.clock(), ...clone(this.d), labor_load: this.laborLoad() };
   }
   changes(after = 0, limit = 100) {
     const i = this.s.events.findIndex((e) => e.seq > after);
     const slice = i < 0 ? [] : this.s.events.slice(i, i + limit);
-    const last = slice.length ? slice[slice.length - 1].seq : after;
-    return { events: clone(slice), next_seq: last, has_more: last < this.s.seq };
+    // next_seq never passes the server's own seq, so a cursor from the future cannot hide later events.
+    const last = slice.length ? slice[slice.length - 1].seq : Math.min(after, this.s.seq);
+    return { generation: this.s.generation, events: clone(slice), next_seq: last, has_more: last < this.s.seq };
   }
   reconcile() {
     const bal = new Map();
@@ -256,8 +291,12 @@ class Wms {
 
   _schedule(id) {
     if (this.asyncDelayMs === null || this.asyncDelayMs === undefined) return;
-    const timer = setTimeout(() => this.settle(id), this.asyncDelayMs);
+    const timer = setTimeout(() => {
+      this.timers.delete(id);
+      try { this.settle(id); } catch (e) { this.warn(`WMS-WitMock: settle of ${id} failed: ${e.message}`); }
+    }, this.asyncDelayMs);
     if (timer.unref) timer.unref();
+    this.timers.set(id, timer);
   }
 
   // Settle one pending async act, or all of them in submit order.
@@ -265,6 +304,8 @@ class Wms {
     const done = [];
     for (const act of this.s.acts) {
       if (act.status !== 'sent' || (id && act.id !== id)) continue;
+      const t = this.timers.get(act.id);
+      if (t) { clearTimeout(t); this.timers.delete(act.id); }
       this._settle(act);
       done.push(act.id);
     }
@@ -272,19 +313,44 @@ class Wms {
     return done;
   }
 
+  // A settle attempt always ends in a well-formed outcome. Any failure rolls the
+  // state back to how it was before the attempt, then refuses the act.
+  // A Refusal keeps its own code. Any other error becomes `internal_error` (HTTP 500).
   _settle(act) {
+    const before = JSON.stringify({ data: this.s.data, counters: this.s.counters });
+    const seq = this.s.seq;
+    const events = this.s.events.length;
     try {
       const result = this._apply(act.verb, act.payload);
       act.status = 'landed';
       act.result = result;
     } catch (e) {
-      if (!(e instanceof Refusal)) throw e;
+      const saved = JSON.parse(before);
+      this.s.data = saved.data;
+      this.s.counters = saved.counters;
+      this.s.seq = seq;
+      this.s.events.length = events;
       act.status = 'refused';
-      act.reason = e.reason;
-      act.error_code = e.code;
-      act.http_status = e.status;
+      act.result = null;
+      if (e instanceof Refusal) {
+        act.reason = e.reason;
+        act.error_code = e.code;
+        act.http_status = e.status;
+      } else {
+        this.warn(`WMS-WitMock: act ${act.id} (${act.verb}) hit an internal error: ${e && e.stack ? e.stack : e}`);
+        act.reason = `The mock hit an internal error while applying this act. Nothing was changed. (${e && e.message ? e.message : e})`;
+        act.error_code = 'internal_error';
+        act.http_status = 500;
+      }
     }
     act.settled_at = this.clock();
+  }
+
+  // Look up a record that must exist. A missing one is a refusal, not a crash.
+  _need(coll, id, label) {
+    const r = this._find(coll, id);
+    if (!r) throw new Refusal('dangling_reference', `${label} ${id} does not exist in the store, so this act cannot be applied.`);
+    return r;
   }
 
   // ---- validation (shape and existence only; rule checks are refusals) ---
@@ -340,11 +406,11 @@ class Wms {
     const ref = task.id;
     let result;
     if (task.type === 'putaway') {
-      const pallet = this._find('pallets', task.pallet_id);
+      const pallet = this._need('pallets', task.pallet_id, 'Pallet');
       const rows = this.d.inventory.filter((r) => r.location_id === pallet.id);
       const binTotal = this.d.inventory.filter((r) => r.location_id === task.to_bin).reduce((s, r) => s + r.qty, 0);
       const incoming = rows.reduce((s, r) => s + r.qty, 0);
-      const bin = this._find('bins', task.to_bin);
+      const bin = this._need('bins', task.to_bin, 'Bin');
       if (bin.status !== 'active') throw new Refusal('bin_not_active', `Bin ${bin.id} is ${bin.status}.`);
       if (binTotal + incoming > bin.capacity) throw new Refusal('bin_over_capacity', `Bin ${bin.id} holds ${binTotal} of ${bin.capacity}. Pallet ${pallet.id} adds ${incoming}.`);
       for (const r of [...rows]) this._move('putaway', r.item_id, pallet.id, task.to_bin, r.qty, ref);
@@ -354,7 +420,7 @@ class Wms {
       const have = this._qty(task.from_bin, task.item_id);
       if (have < task.qty) throw new Refusal('insufficient_stock', `Bin ${task.from_bin} has ${have} of ${task.item_id}. The pick needs ${task.qty}.`);
       this._move('pick', task.item_id, task.from_bin, task.to_location, task.qty, ref);
-      const order = this._find('orders', task.order_id);
+      const order = this._need('orders', task.order_id, 'Order');
       const lines = order.lines.map((l) => (l.line === task.line ? { ...l, picked_qty: l.picked_qty + task.qty } : l));
       this._patch('orders', order, { lines });
       result = { task_id: task.id, type: 'pick', order_id: order.id, qty: task.qty, from_bin: task.from_bin, to_location: task.to_location };
@@ -372,7 +438,7 @@ class Wms {
         }
       }
     } else if (task.type === 'pack') {
-      const order = this._find('orders', task.order_id);
+      const order = this._need('orders', task.order_id, 'Order');
       const rows = this.d.inventory.filter((r) => r.location_id === task.from_location);
       const palletId = this._next('PAL-', 'pallets', 3);
       const delId = this._next('OD-', 'deliveries', 4);
@@ -382,7 +448,7 @@ class Wms {
       this._patch('orders', order, { status: 'packed', delivery_id: delId });
       result = { task_id: task.id, type: 'pack', order_id: order.id, delivery_id: delId, pallet_id: palletId };
     } else if (task.type === 'count') {
-      const cc = this._find('cycle_counts', task.cycle_count_id);
+      const cc = this._need('cycle_counts', task.cycle_count_id, 'Cycle count');
       const system = this._qty(task.bin_id, task.item_id);
       const variance = b.counted_qty - system;
       if (variance > 0) this._move('adjust', task.item_id, null, task.bin_id, variance, ref);
@@ -438,9 +504,9 @@ class Wms {
     const full = lines.every((x) => x.received_qty >= x.expected_qty);
     this._patch('asns', asn, { lines, status: full ? 'received' : 'receiving' });
     if (full) {
-      const door = this._find('doors', asn.door_id);
+      const door = this._need('doors', asn.door_id, 'Door');
       this._patch('doors', door, { status: 'free', current_ref: null });
-      this._patch('dock_appointments', this._find('dock_appointments', asn.appointment_id), { status: 'completed' });
+      this._patch('dock_appointments', this._need('dock_appointments', asn.appointment_id, 'Dock appointment'), { status: 'completed' });
     }
     return { asn_id: asn.id, asn_status: full ? 'received' : 'receiving', pallets };
   }
@@ -450,7 +516,7 @@ class Wms {
     const load = this._find('loads', b.load_id);
     if (!load) throw new Refusal('unknown_load', `Load ${b.load_id} does not exist.`);
     if (load.status === 'shipped') throw new Refusal('load_already_shipped', `Load ${load.id} already shipped.`);
-    const door = this._find('doors', load.door_id);
+    const door = this._need('doors', load.door_id, 'Door');
     if (door.direction !== 'outbound') throw new Refusal('wrong_door', `Door ${door.id} is not an outbound door.`);
     const requested = b.delivery_ids || [];
     for (const id of requested) {
@@ -482,7 +548,7 @@ class Wms {
     }
     this._patch('loads', load, { status: 'shipped', delivery_ids: all, seal_no: b.seal_no || null, shipped_at: this.clock() });
     this._patch('doors', door, { status: 'free', current_ref: null });
-    this._patch('dock_appointments', this._find('dock_appointments', load.appointment_id), { status: 'completed' });
+    this._patch('dock_appointments', this._need('dock_appointments', load.appointment_id, 'Dock appointment'), { status: 'completed' });
     return { load_id: load.id, delivery_ids: all, pallets_shipped: palletCount, units_shipped: units };
   }
 }

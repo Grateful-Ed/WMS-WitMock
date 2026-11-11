@@ -46,7 +46,7 @@ test('snapshot carries the whole warehouse and its position in the feed', async 
 test('changes feed: ordered {seq, at, kind, entity, id, fields}, paged by after/limit', async () => {
   const api = await start();
   try {
-    assert.deepEqual((await api.get('/v1/changes')).body, { events: [], next_seq: 0, has_more: false });
+    assert.deepEqual((await api.get('/v1/changes')).body, { generation: 1, events: [], next_seq: 0, has_more: false });
     await api.act('complete', { idempotency_key: 'c', task_id: 'TK-0001' });
     const all = (await api.get('/v1/changes?after=0&limit=1000')).body;
     assert.ok(all.events.length >= 4);
