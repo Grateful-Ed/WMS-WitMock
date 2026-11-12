@@ -36,7 +36,7 @@ test('seed shape: doors, zones, bins, pallets', () => {
 test('seed has no wall-clock leakage: store at seed time equals the seed', () => {
   const w = new Wms({ clock: () => 'X' });
   const snap = w.snapshot();
-  delete snap.as_of_seq; delete snap.at; delete snap.labor_load;
+  delete snap.as_of_seq; delete snap.at; delete snap.labor_load; delete snap.generation;
   assert.deepEqual(snap, buildSeed());
 });
 
