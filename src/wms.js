@@ -429,6 +429,7 @@ class Wms {
       if (have < qty) throw new Refusal('insufficient_stock', `Bin ${task.from_bin} has ${have} of ${task.item_id}. The pick needs ${qty}.`);
       this._move('pick', task.item_id, task.from_bin, task.to_location, qty, ref);
       const order = this._need('orders', task.order_id, 'Order');
+      const wasPicked = ['picked', 'packed', 'shipped'].includes(order.status); // never a second pack task
       const lines = order.lines.map((l) => {
         if (l.line !== task.line) return l;
         // The line's status always describes its final state: short below the ordered quantity, no status at full.
@@ -444,7 +445,7 @@ class Wms {
           `Short pick on ${order.id} line ${task.line} (${task.item_id}): picked ${qty} of ${task.qty} from ${task.from_bin}.`, by);
       }
       const done = (l) => l.picked_qty >= l.qty || l.status === 'short';
-      if (lines.every(done) && lines.reduce((s, l) => s + l.picked_qty, 0) > 0) {
+      if (!wasPicked && lines.every(done) && lines.reduce((s, l) => s + l.picked_qty, 0) > 0) {
         this._patch('orders', order, { status: 'picked' });
         const packId = this._next('TK-', 'tasks', 4);
         this._insert('tasks', {

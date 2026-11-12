@@ -188,3 +188,24 @@ test('a short pick or pack creates no task of its own (no re-pick, no replenishm
     assert.deepEqual(ids(), afterPick, 'packing a short order adds no task');
   } finally { await api.close(); }
 });
+
+test('an already-picked order gets no second pack task when a late pick task completes', async () => {
+  const api = await start();
+  try {
+    const [a, ...others] = picksOf(api, 'SO-5001');
+    api.wms._insert('tasks', { ...a, id: 'TK-9002', qty: 5 });
+    const packs = () => api.wms.d.tasks.filter((t) => t.type === 'pack' && t.order_id === 'SO-5001');
+    await complete(api, a.id, { picked_qty: 7 }); // line closed short at 7 of 12
+    let last;
+    for (const t of others) last = await complete(api, t.id);
+    assert.equal(orderOf(api, 'SO-5001').status, 'picked');
+    assert.equal(packs().length, 1);
+    const late = await complete(api, 'TK-9002'); // the remaining 5 arrive after the order was picked
+    assert.equal(late.status, 200);
+    assert.equal(late.body.result.pack_task_id, undefined);
+    assert.equal(packs().length, 1, 'still exactly one pack task');
+    assert.equal(packs()[0].id, last.body.result.pack_task_id);
+    assert.equal('status' in orderOf(api, 'SO-5001').lines[0], false);
+    assert.equal(api.wms.d.inventory.find((r) => r.location_id === 'PK-SO-5001' && r.item_id === 'SKU-1001').qty, 12);
+  } finally { await api.close(); }
+});
