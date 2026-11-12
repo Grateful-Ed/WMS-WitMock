@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WMS-WitMock — the modern host</title><style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#2a3240;--ink:#e6edf3;--dim:#9aa7b4;--acc:#58a6ff;--good:#3fb950;--warn:#d29922}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1020px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:34px;margin:0 0 4px}h2{font-size:21px;margin:34px 0 10px;border-bottom:2px solid var(--acc);padding-bottom:5px}
+.sub{color:var(--dim);font-size:17px;margin:0 0 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--dim)}.chip b{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center}
+.tile .n{font-size:30px;font-weight:700}.tile .l{color:var(--dim);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em}
+table{width:100%;border-collapse:collapse;margin:8px 0 4px}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);font-size:14.5px}
+th{color:var(--dim);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}tr:nth-child(even) td{background:#12161d}
+.bar{height:16px;background:#21262d;border-radius:4px;overflow:hidden;min-width:180px}.bar i{display:block;height:100%;background:var(--acc)}.bar.hot i{background:#f85149}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px}.card h3{margin:0 0 5px;font-size:16px}.card p{margin:0;color:var(--dim);font-size:14px}
+code,kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#21262d;border-radius:4px;padding:1px 5px;font-size:.92em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:14px;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.45}
+.note{color:var(--dim);font-size:14px}footer{margin-top:44px;border-top:1px solid var(--line);padding-top:12px;color:var(--dim);font-size:13px}
+.st{font-weight:600}.st.open{color:var(--warn)}.st.released{color:var(--acc)}.st.planned{color:#bc8cff}.st.picked,.st.packed{color:var(--good)}
+</style></head><body><div class="wrap">
+<h1>WMS-WitMock</h1>
+<p class="sub">A mock <b>modern warehouse host</b> — REST/JSON, an API key, a gapless change feed. It exists so Witness, the layer that sits on top of a host, can be built and smoke-tested against a realistic one. Zero dependencies; Node standard library only.</p>
+<div class="chips"><span class="chip">Status: <b>complete — Phase 1 closed</b></span><span class="chip">Main: <b>3ac2f9e1</b></span><span class="chip">Tests: <b>62/62</b></span><span class="chip">Contract: <b>README, frozen at main</b></span></div>
+<div class="tiles">
+<div class="tile"><div class="n">3,779</div><div class="l">units on hand</div></div>
+<div class="tile"><div class="n">12</div><div class="l">items</div></div>
+<div class="tile"><div class="n">30</div><div class="l">bins · 3 zones</div></div>
+<div class="tile"><div class="n">17</div><div class="l">workers</div></div>
+<div class="tile"><div class="n">10</div><div class="l">orders · 2 waves</div></div>
+<div class="tile"><div class="n">22</div><div class="l">open tasks</div></div>
+</div>
+<h2>The warehouse at a glance</h2>
+<p class="note">One deterministic warehouse, WH-01 — the same canonical dataset the legacy host runs, value for value. Zone ZB is deliberately overloaded: too many open pick tasks for its two pickers. That overload is the dataset's design, not an accident.</p>
+<table><tr><th>Zone</th><th>Load</th><th>Crew</th><th></th></tr><tr><td><b>ZA</b> — Reserve</td><td>2 open pick tasks</td><td>1 picker</td><td><div class="bar"><i style="width:14%"></i></div></td></tr><tr><td><b>ZB</b> — Forward Pick</td><td>14 open pick tasks</td><td>2 pickers</td><td><div class="bar hot"><i style="width:100%"></i></div></td></tr><tr><td><b>ZC</b> — Overflow and Returns</td><td>1 open pick tasks</td><td>1 picker</td><td><div class="bar"><i style="width:7%"></i></div></td></tr></table>
+<h2>Waves</h2>
+<table><tr><th>Wave</th><th>Status</th><th>Orders</th><th>Pick tasks</th></tr><tr><td><b>WV-301</b></td><td><span class="st released">released</span></td><td>SO-5001, SO-5002, SO-5003, SO-5004</td><td>17</td></tr><tr><td><b>WV-302</b></td><td><span class="st planned">planned</span></td><td>SO-5005, SO-5006</td><td>none yet — the <code>release</code> act creates them</td></tr></table>
+<h2>Orders</h2>
+<table><tr><th>Order</th><th>Customer</th><th>Status</th><th>Wave</th><th>Size</th></tr><tr><td><b>SO-5001</b></td><td>Acme Retail</td><td><span class="st released">released</span></td><td>WV-301</td><td>3 lines · 22 units</td></tr><tr><td><b>SO-5002</b></td><td>Bluebird Stores</td><td><span class="st released">released</span></td><td>WV-301</td><td>4 lines · 26 units</td></tr><tr><td><b>SO-5003</b></td><td>Cedar and Co</td><td><span class="st released">released</span></td><td>WV-301</td><td>4 lines · 40 units</td></tr><tr><td><b>SO-5004</b></td><td>Delta Outfitters</td><td><span class="st released">released</span></td><td>WV-301</td><td>6 lines · 22 units</td></tr><tr><td><b>SO-5005</b></td><td>Evergreen Market</td><td><span class="st open">open</span></td><td>WV-302</td><td>2 lines · 14 units</td></tr><tr><td><b>SO-5006</b></td><td>Foxglove Boutique</td><td><span class="st open">open</span></td><td>WV-302</td><td>1 lines · 6 units</td></tr><tr><td><b>SO-5007</b></td><td>Granite Supply</td><td><span class="st packed">packed</span></td><td>—</td><td>2 lines · 14 units</td></tr><tr><td><b>SO-5008</b></td><td>Harbor Retail</td><td><span class="st packed">packed</span></td><td>—</td><td>1 lines · 12 units</td></tr><tr><td><b>SO-5009</b></td><td>Iris Home Goods</td><td><span class="st packed">packed</span></td><td>—</td><td>2 lines · 14 units</td></tr><tr><td><b>SO-5010</b></td><td>Juniper Gifts</td><td><span class="st open">open</span></td><td>—</td><td>1 lines · 10 units</td></tr></table>
+<h2>The five acts — how anything changes</h2>
+<div class="cards"><div class="card"><h3><code>POST /v1/acts/complete</code></h3><p><b>Sync · 200.</b> Finish a task — pick, pack, or count. A pick may land <i>short</i> (less than ordered, never zero): the line closes short and one shortage exception is raised on the order.</p></div><div class="card"><h3><code>POST /v1/acts/flag</code></h3><p><b>Sync · 200.</b> Raise an exception against a task, order, pallet, or bin — damage, blocked location, count variance.</p></div><div class="card"><h3><code>POST /v1/acts/post-receiving</code></h3><p><b>Async · 202 + verdict.</b> Post an ASN's receiving: pallets land at their doors, stock enters the building, the ASN closes when the last pallet posts.</p></div><div class="card"><h3><code>POST /v1/acts/confirm-load</code></h3><p><b>Async · 202 + verdict.</b> Confirm a load: deliveries and their pallets are staged onto a trailer at a door, ready to ship.</p></div><div class="card"><h3><code>POST /v1/acts/release</code></h3><p><b>Async · 202 + verdict.</b> <b>New.</b> Release a wave: every still-open order becomes released and its pick tasks come into existence — from the bin holding each item, assigned in the dataset's own pattern. Atomic: a refused release changes nothing.</p></div></div>
+<p class="note">Every act carries an idempotency key: a replay returns the original outcome, a reused key with a different body is refused. Async acts answer <i>sent</i> and land (or refuse) at the verdict — honestly, never pretending. <code>GET /v1/snapshot</code> reads the whole warehouse; <code>GET /v1/changes</code> streams what changed; <code>GET /v1/reconcile</code> proves the books balance.</p>
+<h2>Run it yourself</h2>
+<pre>git clone https://github.com/Grateful-Ed/WMS-WitMock.git
+cd WMS-WitMock &amp;&amp; npm start          # http://localhost:8080
+curl -H "X-API-Key: wms-dev-key" http://localhost:8080/v1/snapshot</pre>
+<footer>Canonical dataset sha256 a5d1e5d8d467e448d496e14ad0e8bf81bacef2bd083d98ab4e43d1c501183b59 · Built for the Witness fresh-build program · This page is a static showcase — the host itself runs locally, as a real host would.</footer>
+</div></body></html>
