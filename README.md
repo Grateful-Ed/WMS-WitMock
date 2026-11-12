@@ -114,16 +114,35 @@ Every error is JSON with a human-readable reason:
 
 #### `complete` (sync, `200`)
 
-Completes a task. Body: `{ idempotency_key, task_id, worker_id?, counted_qty? }`.
+Completes a task. Body: `{ idempotency_key, task_id, worker_id?, counted_qty?, picked_qty? }`.
 
 | Task type | Effect |
 |---|---|
 | `putaway` | Moves the pallet's stock to `to_bin`. Pallet becomes `put_away`. Refused if the bin would go over capacity. |
-| `pick` | Moves stock from `from_bin` to `PK-<order>`. Adds to the order line's `picked_qty`. When the last line is picked, the order becomes `picked` and a `pack` task is created. Refused if the bin is short. |
-| `pack` | Creates an outbound pallet and a delivery (`packed`). Moves stock from `PK-<order>` to the pallet. Order becomes `packed`. |
+| `pick` | Moves stock from `from_bin` to `PK-<order>`. Adds to the order line's `picked_qty`. `picked_qty` (optional) sets how many to pick. Absent means the full task quantity. A pick below the task quantity is a short pick (see below). When every line is closed, full or short, the order becomes `picked` and a `pack` task is created. Refused with `insufficient_stock` if the bin holds less than the quantity being picked. |
+| `pack` | Creates an outbound pallet and a delivery (`packed`). Moves stock from `PK-<order>` to the pallet. Order becomes `packed`. On a short order it ships what is actually in `PK-<order>`. |
 | `count` | `counted_qty` is required. Adjusts stock to the count. If it differs, a `count_variance` exception is raised. |
 
-Rules the mock enforces on `complete`: `task_id` and `worker_id` are strings of 1 to 64 characters. An unknown task or worker is `404 not_found`. `counted_qty` is allowed only on `count` tasks (and is required there). Refusals include `task_not_open`, `insufficient_stock`, `bin_over_capacity`, `bin_not_active` (the putaway bin's status is not `active`; the seed has none, and no act changes a bin's status, so this appears only if the store is edited by hand), and `dangling_reference` (a record the task points to, such as its pallet, bin, order, or cycle count, is missing from the store).
+**`picked_qty` (pick tasks only).** A whole number from 1 to the task quantity.
+
+- Absent: the full task quantity. This is the old behavior, unchanged.
+- `0`: `400 invalid_request`. Zero is not a pick. It is the act not happening. Leave the task open instead.
+- Above the task quantity, not a whole number, negative, not a number, or `null`: `400 invalid_request`.
+- Sent for a task that is not a `pick`: `400 invalid_request`.
+- Above the stock in `from_bin`: `409 insufficient_stock`, as before. Nothing changes.
+
+**Short pick.** A pick with `picked_qty` below the task quantity closes its line as short:
+
+- The task becomes `done`. Stock moves by the actual quantity only. The result `qty` is the actual quantity.
+- The order line gets `picked_qty` (the actual quantity) and `status: "short"`. A line that was picked in full has no `status` field. Line `status` is therefore absent or `short`.
+- The host raises one exception: `kind: "shortage"`, `entity: "order"`, `entity_id` the order id, `severity: "medium"`, `status: "open"`, with a `reason` that names the line, item, bin, and the picked and task quantities. It is the same `exceptions` collection that `flag` and `count_variance` use.
+- The result adds `short: true` and `exception_id`. A full pick has neither key.
+- The change feed carries the task update, the order line update, the ledger insert, the inventory changes, and the exception insert, like any other change.
+- An order with two short lines raises two shortage exceptions, one per short pick.
+
+**Pack guarantee.** An order becomes `picked` when every line is closed, full or short. A `pack` task is created only when the order's total picked quantity is above zero. Because `picked_qty` is at least 1, an order with nothing picked has no `pack` task and nothing to pack. Completing the `pack` task on a short order ships what is actually in `PK-<order>`. The `orders` lines show ordered (`qty`) against picked (`picked_qty`) per line. The shortage exception from the pick is the shipment's flag. Pack raises no second exception. `confirm-load` is unchanged.
+
+Rules the mock enforces on `complete`: `task_id` and `worker_id` are strings of 1 to 64 characters. An unknown task or worker is `404 not_found`. `counted_qty` is allowed only on `count` tasks (and is required there). `picked_qty` is allowed only on `pick` tasks. Refusals include `task_not_open`, `insufficient_stock`, `bin_over_capacity`, `bin_not_active` (the putaway bin's status is not `active`; the seed has none, and no act changes a bin's status, so this appears only if the store is edited by hand), and `dangling_reference` (a record the task points to, such as its pallet, bin, order, or cycle count, is missing from the store).
 
 Result examples: `{ "task_id": "TK-0001", "type": "pick", "order_id": "SO-5001", "qty": 12, ... }`. A task that is not `open` is refused: `409 task_not_open`.
 
@@ -185,4 +204,4 @@ test/              node:test suites
 
 ## Tests
 
-`npm test` runs 45 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), and edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling.
+`npm test` runs 50 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (5): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, and the full-quantity flow unchanged.

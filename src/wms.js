@@ -367,6 +367,12 @@ class Wms {
       if (task.type === 'count') {
         if (!Number.isInteger(b.counted_qty) || b.counted_qty < 0) bad('counted_qty is required for count tasks (integer, 0 or more).');
       } else if (b.counted_qty !== undefined) bad('counted_qty is only allowed for count tasks.');
+      if (b.picked_qty !== undefined) {
+        if (task.type !== 'pick') bad('picked_qty is only allowed for pick tasks.');
+        if (b.picked_qty === 0) bad('picked_qty 0 is not a pick. Zero means the act did not happen. Leave the task open instead.');
+        if (!posInt(b.picked_qty)) bad('picked_qty must be a whole number from 1 to the task quantity.');
+        if (b.picked_qty > task.qty) bad(`picked_qty ${b.picked_qty} is above the task quantity ${task.qty}.`);
+      }
     } else if (verb === 'flag') {
       if (!FLAGGABLE[b.entity]) bad(`entity must be one of: ${Object.keys(FLAGGABLE).join(', ')}.`);
       if (!isId(b.id)) bad('id is required (string).');
@@ -417,14 +423,25 @@ class Wms {
       this._patch('pallets', pallet, { status: 'put_away' });
       result = { task_id: task.id, type: 'putaway', pallet_id: pallet.id, to_bin: task.to_bin, qty: incoming };
     } else if (task.type === 'pick') {
+      const qty = b.picked_qty === undefined ? task.qty : b.picked_qty;
+      const short = qty < task.qty;
       const have = this._qty(task.from_bin, task.item_id);
-      if (have < task.qty) throw new Refusal('insufficient_stock', `Bin ${task.from_bin} has ${have} of ${task.item_id}. The pick needs ${task.qty}.`);
-      this._move('pick', task.item_id, task.from_bin, task.to_location, task.qty, ref);
+      if (have < qty) throw new Refusal('insufficient_stock', `Bin ${task.from_bin} has ${have} of ${task.item_id}. The pick needs ${qty}.`);
+      this._move('pick', task.item_id, task.from_bin, task.to_location, qty, ref);
       const order = this._need('orders', task.order_id, 'Order');
-      const lines = order.lines.map((l) => (l.line === task.line ? { ...l, picked_qty: l.picked_qty + task.qty } : l));
+      const lines = order.lines.map((l) => {
+        if (l.line !== task.line) return l;
+        return short ? { ...l, picked_qty: l.picked_qty + qty, status: 'short' } : { ...l, picked_qty: l.picked_qty + qty };
+      });
       this._patch('orders', order, { lines });
-      result = { task_id: task.id, type: 'pick', order_id: order.id, qty: task.qty, from_bin: task.from_bin, to_location: task.to_location };
-      if (order.lines.every((l) => l.picked_qty >= l.qty)) {
+      result = { task_id: task.id, type: 'pick', order_id: order.id, qty, from_bin: task.from_bin, to_location: task.to_location };
+      if (short) {
+        result.short = true;
+        result.exception_id = this._raise('shortage', 'order', order.id, 'medium',
+          `Short pick on ${order.id} line ${task.line} (${task.item_id}): picked ${qty} of ${task.qty} from ${task.from_bin}.`, by);
+      }
+      const done = (l) => l.picked_qty >= l.qty || l.status === 'short';
+      if (lines.every(done) && lines.reduce((s, l) => s + l.picked_qty, 0) > 0) {
         this._patch('orders', order, { status: 'picked' });
         const packId = this._next('TK-', 'tasks', 4);
         this._insert('tasks', {
