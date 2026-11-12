@@ -191,7 +191,7 @@ Releases a wave. Body: `{ idempotency_key, wave_id }`. Answers `202` with the ac
 
 Whatever goes wrong while a verdict is applied, the act ends as `landed` or `refused`. It never stays `sent`. An unexpected failure in the mock is stored as `refused` with code `internal_error`, and all changes made by that attempt are undone.
 
-**Unknown ids: sync and async differ.** A sync act (`complete`, `flag`) checks that its task, worker, or target exists when you submit. If not, you get `404 not_found` and the key is not used up. An async act (`post-receiving`, `confirm-load`) does not check the ASN or load when you submit. `release` is the exception among async acts: it checks `wave_id` when you submit, as described under `release`. It answers `202`, uses up the key, and is refused at the verdict (`unknown_asn`, `unknown_load`).
+**Unknown ids: sync and async differ.** A sync act (`complete`, `flag`) checks that its task, worker, or target exists when you submit. If not, you get `404 not_found` and the key is not used up. An async act (`post-receiving`, `confirm-load`) does not check the ASN or load when you submit. It answers `202`, uses up the key, and is refused at the verdict (`unknown_asn`, `unknown_load`). `release` is the exception among async acts: it checks `wave_id` when you submit, as described under `release`.
 
 ### Mock control (not part of the integration surface)
 
