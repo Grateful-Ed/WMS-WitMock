@@ -171,3 +171,20 @@ test('a one-task short pick still ends flagged short', async () => {
     assert.deepEqual([l.picked_qty, l.status], [11, 'short']);
   } finally { await api.close(); }
 });
+
+test('a short pick or pack creates no task of its own (no re-pick, no replenishment)', async () => {
+  const api = await start();
+  try {
+    const picks = picksOf(api, 'SO-5001');
+    const ids = () => api.wms.d.tasks.map((t) => t.id).sort();
+    const before = ids();
+    await complete(api, picks[0].id, { picked_qty: 7 });
+    assert.deepEqual(ids(), before, 'a short pick that does not finish the order adds no task');
+    await complete(api, picks[1].id);
+    const last = await complete(api, picks[2].id);
+    assert.deepEqual(ids().filter((id) => !before.includes(id)), [last.body.result.pack_task_id], 'only the pack task appears');
+    const afterPick = ids();
+    await complete(api, last.body.result.pack_task_id);
+    assert.deepEqual(ids(), afterPick, 'packing a short order adds no task');
+  } finally { await api.close(); }
+});

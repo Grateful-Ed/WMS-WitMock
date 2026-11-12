@@ -139,6 +139,7 @@ Completes a task. Body: `{ idempotency_key, task_id, worker_id?, counted_qty?, p
 - The result adds `short: true` and `exception_id`. A full pick has neither key.
 - The change feed carries the task update, the order line update, the ledger insert, the inventory changes, and the exception insert, like any other change.
 - An order with two short lines raises two shortage exceptions, one per short pick.
+- A short pick creates no task. There is no automatic re-pick and no replenishment task. Whether to pick the rest is a choice for the user, and the host does not make that choice. The only task a pick can create is the `pack` task, when every line is closed (see Pack guarantee). Completing a `pack` task creates no task either.
 
 **Pack guarantee.** An order becomes `picked` when every line is closed, full or short. A `pack` task is created only when the order's total picked quantity is above zero. Because `picked_qty` is at least 1, an order with nothing picked has no `pack` task and nothing to pack. Completing the `pack` task on a short order ships what is actually in `PK-<order>`. The `orders` lines show ordered (`qty`) against picked (`picked_qty`) per line. The shortage exception from the pick is the shipment's flag. Pack raises no second exception. `confirm-load` is unchanged.
 
@@ -204,4 +205,4 @@ test/              node:test suites
 
 ## Tests
 
-`npm test` runs 52 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (7): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, the full-quantity flow unchanged, a line completed by a second pick task losing its `short` status, and a one-task short staying flagged.
+`npm test` runs 53 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (8): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, the full-quantity flow unchanged, a line completed by a second pick task losing its `short` status, a one-task short staying flagged, and a short pick or pack creating no task of its own.
