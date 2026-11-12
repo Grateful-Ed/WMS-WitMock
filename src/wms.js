@@ -48,8 +48,13 @@ function canonical(v) {
   return JSON.stringify(v);
 }
 
-const ASYNC_VERBS = new Set(['post-receiving', 'confirm-load']);
-const VERBS = ['complete', 'flag', 'post-receiving', 'confirm-load'];
+const ASYNC_VERBS = new Set(['post-receiving', 'confirm-load', 'release']);
+const VERBS = ['complete', 'flag', 'post-receiving', 'confirm-load', 'release'];
+
+// The status an order has before its wave is released. The seed already uses it (SO-5005, SO-5006, SO-5010).
+const PRE_RELEASE = 'open';
+// Who gets a pick task, by zone. Same pattern as the seeded pick tasks: ZB alternates, the others have one picker.
+const PICKERS = { ZA: ['W-05'], ZB: ['W-09', 'W-10'], ZC: ['W-11'] };
 
 class Wms {
   constructor({ file = null, clock = () => new Date().toISOString(), asyncDelayMs = null, seedFn = buildSeed, warn = console.warn } = {}) {
@@ -394,6 +399,9 @@ class Wms {
       if (!isId(b.load_id)) bad('load_id is required (string).');
       if (b.delivery_ids !== undefined && (!Array.isArray(b.delivery_ids) || !b.delivery_ids.every(isId))) bad('delivery_ids must be an array of strings.');
       if (b.seal_no !== undefined && b.seal_no !== null && typeof b.seal_no !== 'string') bad('seal_no must be a string.');
+    } else if (verb === 'release') {
+      if (!isId(b.wave_id)) bad('wave_id is required (string).');
+      if (!this._find('waves', b.wave_id)) throw new ApiError(404, 'not_found', `Wave ${b.wave_id} does not exist.`);
     }
   }
 
@@ -401,6 +409,7 @@ class Wms {
     if (verb === 'complete') return this._complete(b);
     if (verb === 'flag') return this._flag(b);
     if (verb === 'post-receiving') return this._postReceiving(b);
+    if (verb === 'release') return this._release(b);
     return this._confirmLoad(b);
   }
 
@@ -530,6 +539,51 @@ class Wms {
       this._patch('dock_appointments', this._need('dock_appointments', asn.appointment_id, 'Dock appointment'), { status: 'completed' });
     }
     return { asn_id: asn.id, asn_status: full ? 'received' : 'receiving', pallets };
+  }
+
+  // ---- release (async) ---------------------------------------------------
+  // The bin to pick an item from: the fullest bin in a pick-type zone, else the fullest bin anywhere. Ties go to the lowest id.
+  _pickBin(itemId) {
+    const pickZones = new Set(this.d.zones.filter((z) => z.type === 'pick').map((z) => z.id));
+    const held = this.d.bins
+      .map((bin) => ({ bin, qty: this._qty(bin.id, itemId) }))
+      .filter((x) => x.qty > 0);
+    const best = (list) => list.sort((a, b) => b.qty - a.qty || (a.bin.id < b.bin.id ? -1 : 1))[0];
+    const inPick = held.filter((x) => pickZones.has(x.bin.zone_id));
+    const chosen = best(inPick.length ? inPick : held);
+    return chosen ? chosen.bin : null;
+  }
+
+  _release(b) {
+    const wave = this._find('waves', b.wave_id);
+    if (!wave) throw new Refusal('unknown_wave', `Wave ${b.wave_id} does not exist.`);
+    const released = [];
+    const skipped = [];
+    const taskIds = [];
+    const turn = {}; // per zone: how many tasks this release has given out
+    for (const orderId of wave.order_ids) {
+      const order = this._need('orders', orderId, 'Order');
+      if (order.status !== PRE_RELEASE) { skipped.push(order.id); continue; }
+      this._patch('orders', order, { status: 'released' });
+      for (const l of order.lines) {
+        const bin = this._pickBin(l.item_id);
+        if (!bin) throw new Refusal('no_pick_bin', `No bin holds ${l.item_id}, so line ${l.line} of ${order.id} has nowhere to be picked from. Nothing was released.`);
+        const pickers = PICKERS[bin.zone_id];
+        const n = turn[bin.zone_id] || 0;
+        turn[bin.zone_id] = n + 1;
+        const id = this._next('TK-', 'tasks', 4);
+        this._insert('tasks', {
+          id, type: 'pick', status: 'open', zone_id: bin.zone_id, assigned_to: pickers ? pickers[n % pickers.length] : null,
+          wave_id: wave.id, order_id: order.id, line: l.line, item_id: l.item_id, qty: l.qty,
+          from_bin: bin.id, to_location: `PK-${order.id}`,
+          created_at: this.clock(), completed_at: null, completed_by: null,
+        });
+        taskIds.push(id);
+      }
+      released.push(order.id);
+    }
+    if (wave.status === 'planned') this._patch('waves', wave, { status: 'released', released_at: this.clock() });
+    return { wave_id: wave.id, wave_status: wave.status, released_order_ids: released, skipped_order_ids: skipped, task_ids: taskIds };
   }
 
   // ---- confirm-load (async) ---------------------------------------------

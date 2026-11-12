@@ -24,7 +24,7 @@ One deterministic warehouse, `WH-01`. The seed code is `src/seed.js`. It uses no
 - 8 staging pallets: `PAL-001`–`PAL-003` inbound (waiting for putaway), `PAL-004`–`PAL-008` outbound (packed, waiting to ship).
 - 12 items (`SKU-1001`–`SKU-1012`). Inventory by bin and by pallet.
 - Inbound: 5 ASNs (2 scheduled, 1 arrived, 1 receiving, 1 received) with dock appointments.
-- Outbound: 10 orders, 2 waves, 3 packed deliveries, 2 loads. Wave `WV-301` is released with 17 open pick tasks.
+- Outbound: 10 orders, 2 waves, 3 packed deliveries, 2 loads. Wave `WV-301` is released with 17 open pick tasks. Wave `WV-302` is `planned`: its orders (`SO-5005`, `SO-5006`) are `open` and it has no tasks. The `release` act (below) brings them into being.
 - 22 open tasks, 2 cycle counts, 2 open exceptions.
 - Labor: 6 departments, 17 workers. Zone `ZB` is the deliberately overloaded zone: 14 open tasks, 2 workers. `labor_overload.zone_id` in the dataset names it.
 
@@ -91,7 +91,7 @@ Every error is JSON with a human-readable reason:
 
 ### Acts
 
-`POST /v1/acts/{verb}` with verb `complete`, `flag`, `post-receiving`, or `confirm-load`.
+`POST /v1/acts/{verb}` with verb `complete`, `flag`, `post-receiving`, `confirm-load`, or `release`.
 
 **Idempotency key.** Every act needs `idempotency_key` (string, 1–128 chars) in the body. The `Idempotency-Key` header also works.
 
@@ -173,11 +173,25 @@ Ships a load. Body: `{ idempotency_key, load_id, delivery_ids?, seal_no? }`. `de
 - Landed: pallet stock leaves the warehouse (ledger type `ship`). Deliveries and orders become `shipped`. The load becomes `shipped`. The door is freed. Result: `{ load_id, delivery_ids, pallets_shipped, units_shipped }`.
 - Refused (with `reason`): unknown load (`unknown_load`), load already shipped (`load_already_shipped`), a wrong door (`wrong_door`), a delivery that does not exist (`unknown_delivery`) or is on another load (`delivery_on_other_load`), a delivery that is not `packed` (`delivery_not_packed`), a load with no deliveries (`empty_load`), or a missing door or dock appointment row (`dangling_reference`). A refused act changes nothing.
 
+#### `release` (async, `202`)
+
+Releases a wave. Body: `{ idempotency_key, wave_id }`. Answers `202` with the act object (`status: "sent"`). **Nothing changes until the verdict.** Releasing a wave is the moment its pick tasks come into existence. Before it, a wave's orders are `open` and the wave has no tasks.
+
+- Landed: every order in the wave that is still `open` (the pre-release order status) becomes `released`, and one `pick` task is created for each of its lines, in order and line order. Tasks look exactly like the seeded pick tasks: `zone_id` is the zone of `from_bin`, `from_bin` is the bin that holds the line's item, `to_location` is `PK-<order id>`, `wave_id`, `order_id`, `line`, `item_id`, `qty` (the line quantity), `status: "open"`, and `assigned_to`.
+- `from_bin`: the bin with the most stock of the item in a pick-type zone (the forward pick zone). If no pick-zone bin holds the item, the bin with the most stock anywhere. A tie goes to the lowest bin id. Stock is not reserved. A pick that finds too little stock is refused at pick time, as before.
+- `assigned_to`: by zone, in turn, starting at the first worker each release. `ZA`: `W-05`. `ZB`: `W-09`, `W-10`, `W-09`, ... `ZC`: `W-11`. This is the pattern of the seeded pick tasks.
+- The wave becomes `released` and gets `released_at`, if it was `planned`. A wave in any other status keeps its status.
+- **Skip rule.** An order that is not `open` (`released`, `picked`, `packed`, `shipped`) is skipped. It gets no task and no change. Releasing a wave twice creates nothing the second time: the second act lands with empty `released_order_ids` and `task_ids`. A repeated idempotency key replays the first result, as with every act.
+- Result: `{ wave_id, wave_status, released_order_ids[], skipped_order_ids[], task_ids[] }`.
+- The change feed carries the order updates (`status`), the wave update, and the task inserts, like any other change.
+- Refused (with `reason`): a wave order that is missing from the store (`dangling_reference`), or an order line whose item is in no bin (`no_pick_bin`). A refused act changes nothing: no order is released and no task is created.
+- Validation (400, checked when you submit): `wave_id` is a string of 1 to 64 characters. An unknown `wave_id` is `404 not_found` at once and the key is not used up. Here `release` is like `complete` and `flag`, and unlike `post-receiving` and `confirm-load`.
+
 **Verdict.** Poll `status_url`. `sent` → `landed` or `refused`. The verdict arrives after `WMS_ASYNC_DELAY_MS`. The delay is counted from the moment the act is scheduled. If the server restarts while an act is `sent`, the act is scheduled again at boot and its clock starts over. Repeating a request with the same key while `sent` returns `202`. After the verdict it returns `200` with the settled act.
 
 Whatever goes wrong while a verdict is applied, the act ends as `landed` or `refused`. It never stays `sent`. An unexpected failure in the mock is stored as `refused` with code `internal_error`, and all changes made by that attempt are undone.
 
-**Unknown ids: sync and async differ.** A sync act (`complete`, `flag`) checks that its task, worker, or target exists when you submit. If not, you get `404 not_found` and the key is not used up. An async act (`post-receiving`, `confirm-load`) does not check the ASN or load when you submit. It answers `202`, uses up the key, and is refused at the verdict (`unknown_asn`, `unknown_load`).
+**Unknown ids: sync and async differ.** A sync act (`complete`, `flag`) checks that its task, worker, or target exists when you submit. If not, you get `404 not_found` and the key is not used up. An async act (`post-receiving`, `confirm-load`) does not check the ASN or load when you submit. `release` is the exception among async acts: it checks `wave_id` when you submit, as described under `release`. It answers `202`, uses up the key, and is refused at the verdict (`unknown_asn`, `unknown_load`).
 
 ### Mock control (not part of the integration surface)
 
@@ -205,4 +219,4 @@ test/              node:test suites
 
 ## Tests
 
-`npm test` runs 54 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (9): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, the full-quantity flow unchanged, a line completed by a second pick task losing its `short` status, a one-task short staying flagged, a short pick or pack creating no task of its own, and an already-picked order getting no second pack task.
+`npm test` runs 62 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (9): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, the full-quantity flow unchanged, a line completed by a second pick task losing its `short` status, a one-task short staying flagged, a short pick or pack creating no task of its own, and an already-picked order getting no second pack task. Wave release (8): 202 then verdict with feed events, tasks matching the seeded pick tasks exactly, a second release creating nothing and key replay, the skip rule, the shipped waves `WV-301` and `WV-302`, unknown and malformed `wave_id`, a no-bin refusal rolling back, and released tasks picking through to a picked order and wave.
