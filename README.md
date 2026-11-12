@@ -134,7 +134,7 @@ Completes a task. Body: `{ idempotency_key, task_id, worker_id?, counted_qty?, p
 **Short pick.** A pick with `picked_qty` below the task quantity closes its line as short:
 
 - The task becomes `done`. Stock moves by the actual quantity only. The result `qty` is the actual quantity.
-- The order line gets `picked_qty` (the actual quantity) and `status: "short"`. A line that was picked in full has no `status` field. Line `status` is therefore absent or `short`.
+- The order line gets `picked_qty` (the actual quantity) and `status: "short"`. A line that was picked in full has no `status` field. Line `status` is therefore absent or `short`. A line's `status` always describes its final state: a line that reaches its full ordered quantity carries no `status`, whenever that happens (a lingering `short` is removed).
 - The host raises one exception: `kind: "shortage"`, `entity: "order"`, `entity_id` the order id, `severity: "medium"`, `status: "open"`, with a `reason` that names the line, item, bin, and the picked and task quantities. It is the same `exceptions` collection that `flag` and `count_variance` use.
 - The result adds `short: true` and `exception_id`. A full pick has neither key.
 - The change feed carries the task update, the order line update, the ledger insert, the inventory changes, and the exception insert, like any other change.
@@ -204,4 +204,4 @@ test/              node:test suites
 
 ## Tests
 
-`npm test` runs 50 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (5): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, and the full-quantity flow unchanged.
+`npm test` runs 52 tests: seed determinism and dataset integrity (9), quantity reconciliation (3), idempotent replay (7), the async verdict arc (6), API surface, change feed, and persistence (6), edge cases (14): settle safety and dangling references, the 413 answer, reset and timers, cursor and generation, corrupt state file, and shared auth and verb handling, and short picking (7): short closure with shortage and feed, `picked_qty` refusals, a short order packing and shipping its actuals, an all-short order, the full-quantity flow unchanged, a line completed by a second pick task losing its `short` status, and a one-task short staying flagged.

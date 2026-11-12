@@ -132,3 +132,42 @@ test('a full-quantity pick is unchanged: explicit picked_qty equal to the task q
   assert.deepEqual(Object.keys(a.results[0]), ['task_id', 'type', 'order_id', 'qty', 'from_bin', 'to_location']);
   assert.ok(!a.ev.some((e) => e.entity === 'exception'), 'a full pick raises no exception');
 });
+
+test('a line that reaches its full quantity carries no status, even after an earlier short pick', async () => {
+  const api = await start();
+  try {
+    // Two pick tasks for one line, built directly in the store: line 1 of SO-5001 orders 12.
+    const [a, ...others] = picksOf(api, 'SO-5001');
+    api.wms._insert('tasks', { ...a, id: 'TK-9001', qty: 5 });
+    const shortages = () => api.wms.d.exceptions.filter((e) => e.kind === 'shortage' && e.entity_id === 'SO-5001');
+    const line = () => orderOf(api, 'SO-5001').lines[0];
+
+    const first = await complete(api, a.id, { picked_qty: 7 }); // 7 of 12: short
+    assert.equal(first.body.result.short, true);
+    assert.deepEqual([line().picked_qty, line().status], [7, 'short']);
+    assert.equal(shortages().length, 1);
+
+    const second = await complete(api, 'TK-9001'); // the remaining 5 in full
+    assert.equal(second.status, 200);
+    assert.equal(line().picked_qty, 12);
+    assert.equal('status' in line(), false, 'a full line has no status field');
+    assert.equal(shortages().length, 1, 'the shortage exception stands as the historical record');
+    assert.equal(second.body.result.short, undefined);
+
+    let last;
+    for (const t of others) last = await complete(api, t.id);
+    assert.equal(orderOf(api, 'SO-5001').status, 'picked');
+    assert.equal(api.wms.d.tasks.filter((t) => t.type === 'pack' && t.order_id === 'SO-5001').length, 1);
+    assert.ok(last.body.result.pack_task_id);
+    assert.equal((await api.get('/v1/reconcile')).body.ok, true);
+  } finally { await api.close(); }
+});
+
+test('a one-task short pick still ends flagged short', async () => {
+  const api = await start();
+  try {
+    await complete(api, picksOf(api, 'SO-5001')[0].id, { picked_qty: 11 });
+    const l = orderOf(api, 'SO-5001').lines[0];
+    assert.deepEqual([l.picked_qty, l.status], [11, 'short']);
+  } finally { await api.close(); }
+});

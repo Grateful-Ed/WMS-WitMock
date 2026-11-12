@@ -431,7 +431,10 @@ class Wms {
       const order = this._need('orders', task.order_id, 'Order');
       const lines = order.lines.map((l) => {
         if (l.line !== task.line) return l;
-        return short ? { ...l, picked_qty: l.picked_qty + qty, status: 'short' } : { ...l, picked_qty: l.picked_qty + qty };
+        // The line's status always describes its final state: short below the ordered quantity, no status at full.
+        const { status: _old, ...rest } = l;
+        const picked = l.picked_qty + qty;
+        return picked < l.qty ? { ...rest, picked_qty: picked, status: 'short' } : { ...rest, picked_qty: picked };
       });
       this._patch('orders', order, { lines });
       result = { task_id: task.id, type: 'pick', order_id: order.id, qty, from_bin: task.from_bin, to_location: task.to_location };
